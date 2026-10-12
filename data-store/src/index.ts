@@ -341,8 +341,14 @@ if (numWorkers > 1 && cluster.isPrimary) {
   const app = express();
   app.use(cors());
 
-  app.get("/health", (_req, res) => {
-    res.json({ ok: true, dataDir: DATA_DIR, pid: process.pid, isWorker: cluster.isWorker });
+  app.get(["/health", "/api/health"], (_req, res) => {
+    res.json({
+      ok: true,
+      dataDir: DATA_DIR,
+      pid: process.pid,
+      isWorker: cluster.isWorker,
+      revision: process.env.BUILD_REVISION,
+    });
   });
 
   app.get("/api/chrome", (_req, res) => {

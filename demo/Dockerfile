@@ -46,6 +46,9 @@ RUN npm run build -w renderer
 FROM node:22-alpine AS runner
 WORKDIR /app
 
+ARG BUILD_REVISION=unknown
+ENV BUILD_REVISION=$BUILD_REVISION
+
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV ENABLE_PROXY_REWRITES=true
