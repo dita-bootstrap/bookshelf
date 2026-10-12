@@ -4,6 +4,9 @@ import { useApp } from "@modelcontextprotocol/ext-apps/react";
 import type { CallToolResult } from "@modelcontextprotocol/client";
 import TopicPage, { type TopicPageProps } from "./TopicPage";
 
+const isLocalHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const DATA_BASE = isLocalHost ? `${window.location.protocol}//${window.location.hostname}:4000/data` : "/data";
+
 type RawResult = Partial<TopicPageProps> & { content?: { type: string; text?: string }[] };
 
 function extractPayload(result: RawResult | null | undefined): TopicPageProps | null {
@@ -110,20 +113,19 @@ function AppShell() {
             return;
           }
         }
+        console.warn(`render_topic_ui failed for ${docId}/${topicPath}, using fetch fallback`, result);
       }
 
       // Standalone iframe fallback: fetch topic doc and preserve/fetch TOC
       const normalizedPath = topicPath.endsWith(".json") ? topicPath : `${topicPath}.json`;
-      const dataUrl = `${window.location.protocol}//${window.location.hostname}:4000/data/${docId}/${normalizedPath}`;
+      const dataUrl = `${DATA_BASE}/${docId}/${normalizedPath}`;
       const res = await fetch(dataUrl);
       if (!res.ok) throw new Error(`HTTP ${res.status} loading ${topicPath}`);
       const doc = await res.json();
 
       let toc = snapshot?.toc;
       if (!toc) {
-        const tocRes = await fetch(
-          `${window.location.protocol}//${window.location.hostname}:4000/data/${docId}/toc.json`,
-        ).catch(() => null);
+        const tocRes = await fetch(`${DATA_BASE}/${docId}/toc.json`).catch(() => null);
         if (tocRes && tocRes.ok) toc = await tocRes.json();
       }
 
@@ -139,6 +141,7 @@ function AppShell() {
       commitData(payload);
       setResultError(null);
     } catch (err) {
+      console.error(`Navigation to ${docId}/${topicPath} failed`, err);
       setResultError(err instanceof Error ? err.message : String(err));
     }
   };
