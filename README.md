@@ -227,23 +227,45 @@ Add `mcp-server` to your AI assistant configuration (Claude Desktop, Cursor, Ant
 
 #### Renderer (`renderer/`)
 
-| Variable                                        | Default                                               | Description                                                                  |
-| ----------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `PORT`                                          | `3000`                                                | Port for the Next.js web application to listen on.                           |
-| `BOOTSTRAP_THEME`                               | `"default"`                                           | Bootswatch theme name (`journal`, `darkly`, `flatly`, `cyborg`, etc.).       |
-| `DEFAULT_LANGUAGE`                              | `"en"`                                                | Standard IETF BCP 47 language code for root `<html lang="...">`.             |
-| `OPEN_GRAPH_URL`                                | _(empty)_                                             | Base URL used to construct `og:url` and `twitter:url` metadata tags.         |
-| `CUSTOM_CSS_PATH`                               | _(null)_                                              | Optional path or URL to an additional custom stylesheet.                     |
-| `NEXT_PUBLIC_DATA_URL` / `INTERNAL_DATA_URL`    | `http://localhost:4000/data`                          | Base URL used to fetch `toc.json`, topic files, and search indices.          |
-| `NEXT_PUBLIC_API_URL` / `INTERNAL_API_URL`      | `http://localhost:4000/api`                           | Base URL for data-store API endpoints like `GET /api/docs`.                  |
-| `NEXT_PUBLIC_MCP_SERVER_URL` / `MCP_SERVER_URL` | `http://localhost:4001/mcp`                           | Streamable HTTP endpoint of the `mcp-server` used by `/chat`.                |
-| `ENABLE_CHAT`                                   | _(auto)_                                              | Explicitly enable or disable `/chat` route (`true`/`false`).                 |
-| `SHOW_TOOL_INVOCATIONS`                         | `false`                                               | Set to `true` to display accordion details for MCP tool calls in AI Chat.    |
-| `CHAT_BOT_PROVIDER`                             | `"gemini"`                                            | Active LLM provider for `/chat` (`gemini`, `anthropic`, `openai`, `ollama`). |
-| `GEMINI_API_KEY` / `GEMINI_MODEL`               | _(none)_ / `models/gemini-3.6-flash`                  | API key and model name when using Google Gemini.                             |
-| `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL`         | _(none)_ / `claude-3-5-sonnet-20241022`               | API key and model name when using Anthropic Claude.                          |
-| `OPENAI_API_KEY` / `OPENAI_MODEL`               | _(none)_ / `gpt-4o`                                   | API key and model name when using OpenAI.                                    |
-| `OLLAMA_BASE_URL` / `OLLAMA_MODEL`              | `http://host.docker.internal:11434/v1` / `qwen2.5:3b` | Base URL and model name when using Ollama.                                   |
+| Variable                                              | Default                                               | Description                                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `PORT`                                                | `3000`                                                | Port for the Next.js web application to listen on.                                   |
+| `BOOTSTRAP_THEME`                                     | `"default"`                                           | Bootswatch theme name (`journal`, `darkly`, `flatly`, `cyborg`, etc.).               |
+| `DEFAULT_LANGUAGE`                                    | `"en"`                                                | Standard IETF BCP 47 language code for root `<html lang="...">`.                     |
+| `OPEN_GRAPH_URL`                                      | _(empty)_                                             | Base URL used to construct `og:url` and `twitter:url` metadata tags.                 |
+| `CUSTOM_CSS_PATH`                                     | _(null)_                                              | Optional path or URL to an additional custom stylesheet.                             |
+| `NEXT_PUBLIC_DATA_URL` / `INTERNAL_DATA_URL`          | `http://localhost:4000/data`                          | Base URL used to fetch `toc.json`, topic files, and search indices.                  |
+| `NEXT_PUBLIC_API_URL` / `INTERNAL_API_URL`            | `http://localhost:4000/api`                           | Base URL for data-store API endpoints like `GET /api/docs`.                          |
+| `NEXT_PUBLIC_MCP_SERVER_URL` / `MCP_SERVER_URL`       | `http://localhost:4001/mcp`                           | Streamable HTTP endpoint of the `mcp-server` used by `/chat`.                        |
+| `ENABLE_CHAT`                                         | _(auto)_                                              | Explicitly enable or disable `/chat` route (`true`/`false`).                         |
+| `SHOW_TOOL_INVOCATIONS`                               | `false`                                               | Set to `true` to display accordion details for MCP tool calls in AI Chat.            |
+| `CHAT_BOT_PROVIDER`                                   | `"gemini"`                                            | Active LLM provider for `/chat` (`gemini`, `anthropic`, `openai`, `ollama`).         |
+| `GEMINI_API_KEY` / `GEMINI_MODEL`                     | _(none)_ / `models/gemini-3.6-flash`                  | API key and model name when using Google Gemini.                                     |
+| `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL`               | _(none)_ / `claude-3-5-sonnet-20241022`               | API key and model name when using Anthropic Claude.                                  |
+| `OPENAI_API_KEY` / `OPENAI_MODEL` / `OPENAI_BASE_URL` | _(none)_ / `gpt-4o` / `https://api.openai.com/v1`     | API key, model and endpoint for OpenAI or any OpenAI-compatible service (see below). |
+| `OLLAMA_BASE_URL` / `OLLAMA_MODEL`                    | `http://host.docker.internal:11434/v1` / `qwen2.5:3b` | Base URL and model name when using Ollama.                                           |
+
+##### Other OpenAI-compatible providers
+
+Any service exposing an OpenAI-style `/chat/completions` endpoint works through the `openai` provider: set `OPENAI_BASE_URL`, `OPENAI_API_KEY` and `OPENAI_MODEL`. The model must support tool (function) calling, since `/chat` relies on it.
+
+| Service                                | `OPENAI_BASE_URL`                        | Example `OPENAI_MODEL`                   | Get a key                                                |
+| -------------------------------------- | ---------------------------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| [Groq](https://console.groq.com)       | `https://api.groq.com/openai/v1`         | `llama-3.3-70b-versatile`                | <https://console.groq.com/keys>                          |
+| [OpenRouter](https://openrouter.ai)    | `https://openrouter.ai/api/v1`           | `meta-llama/llama-3.3-70b-instruct:free` | <https://openrouter.ai/keys>                             |
+| [NVIDIA NIM](https://build.nvidia.com) | `https://integrate.api.nvidia.com/v1`    | `meta/llama-3.3-70b-instruct`            | <https://build.nvidia.com> (open a model, "Get API Key") |
+| [Cohere](https://cohere.com)           | `https://api.cohere.ai/compatibility/v1` | `command-r-plus-08-2024`                 | <https://dashboard.cohere.com/api-keys>                  |
+
+Example `.env` for Groq:
+
+```console
+CHAT_BOT_PROVIDER=openai
+OPENAI_BASE_URL=https://api.groq.com/openai/v1
+OPENAI_API_KEY=gsk_...
+OPENAI_MODEL=llama-3.3-70b-versatile
+```
+
+Model IDs and free-tier limits change often; check each provider's model list.
 
 #### MCP Server (`mcp-server/`)
 

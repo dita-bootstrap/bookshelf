@@ -62,6 +62,52 @@ docker compose up -d</codeblock>
     </section>
 
     <section>
+      <title>Using Other LLM Providers</title>
+      <p>Any service exposing an OpenAI-style <codeph>/chat/completions</codeph> endpoint works through the <codeph
+        >openai</codeph> provider by setting <codeph>OPENAI_BASE_URL</codeph>, <codeph
+        >OPENAI_API_KEY</codeph> and <codeph>OPENAI_MODEL</codeph>. The model must support tool (function) calling.</p>
+      <table>
+        <tgroup cols="4">
+          <thead>
+            <row><entry>Service</entry><entry><codeph>OPENAI_BASE_URL</codeph></entry><entry>Example <codeph
+                >OPENAI_MODEL</codeph></entry><entry>Get a key</entry></row>
+          </thead>
+          <tbody>
+            <row><entry>Groq</entry><entry><codeph>https://api.groq.com/openai/v1</codeph></entry><entry><codeph
+                >llama-3.3-70b-versatile</codeph></entry><entry><xref
+                  href="https://console.groq.com/keys"
+                  format="html"
+                  scope="external"
+                /></entry></row>
+            <row><entry>OpenRouter</entry><entry><codeph>https://openrouter.ai/api/v1</codeph></entry><entry><codeph
+                >meta-llama/llama-3.3-70b-instruct:free</codeph></entry><entry><xref
+                  href="https://openrouter.ai/keys"
+                  format="html"
+                  scope="external"
+                /></entry></row>
+            <row><entry>NVIDIA NIM</entry><entry><codeph>https://integrate.api.nvidia.com/v1</codeph></entry><entry
+              ><codeph>meta/llama-3.3-70b-instruct</codeph></entry><entry><xref
+                  href="https://build.nvidia.com"
+                  format="html"
+                  scope="external"
+                /></entry></row>
+            <row><entry>Cohere</entry><entry><codeph>https://api.cohere.ai/compatibility/v1</codeph></entry><entry
+              ><codeph>command-r-plus-08-2024</codeph></entry><entry><xref
+                  href="https://dashboard.cohere.com/api-keys"
+                  format="html"
+                  scope="external"
+                /></entry></row>
+          </tbody>
+        </tgroup>
+      </table>
+      <p>Example <filepath>.env</filepath> for Groq:</p>
+      <codeblock outputclass="language-bash">CHAT_BOT_PROVIDER=openai
+OPENAI_BASE_URL=https://api.groq.com/openai/v1
+OPENAI_API_KEY=gsk_...
+OPENAI_MODEL=llama-3.3-70b-versatile</codeblock>
+    </section>
+
+    <section>
       <title>Chat Interaction Examples</title>
       <p
       >The AI Assistant chatbot handles user queries by dynamically selecting between two primary interaction models based on the intent of the prompt: <b
